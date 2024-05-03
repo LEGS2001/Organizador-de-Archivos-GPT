@@ -1,5 +1,7 @@
 import tkinter as tk
 import customtkinter as ctk
+import shutil
+import json
 import os
 
 from util_openai import organizar_directorio
@@ -33,8 +35,38 @@ def organizar_archivos(api, frame):
     nombres_dirs = obtener_directorios()
 
     clasificaciones_nombres = f'{clasificaciones_dirs}; {nombres_dirs}'
+    dirs = organizar_directorio(api, clasificaciones_nombres) #.replace('`', '')
+    dirs = json.loads(dirs)
+    
+    dirs = dirs['clasificaciones']
 
-    print(organizar_directorio(api, clasificaciones_nombres))
+    # array que contiene sets en formato [(nombre_dir, archivos_correspondientes)]
+    dir_sets = []
+    for k, v in dirs.items():
+        if 'Organizador.exe' in v:
+            v.remove('Organizador.exe')
+        dir_sets.append((k, v))
+
+    crear_directorios(dir_sets)
+
+def crear_directorios(dir_sets):
+
+    # direc[0] --> nombre de la carpeta
+    # direc[1] --> lista de archivos que van a la carpeta
+
+    for direc in dir_sets:
+        nombre_carpeta = direc[0]
+        try:
+            os.makedirs(nombre_carpeta, exist_ok=True)
+        except Exception as e:
+            print(f"Failed to create directory '{nombre_carpeta}'. Reason: {e}")
+
+        for archivo in direc[1]:
+            try:
+                dest_path = os.path.join(nombre_carpeta, os.path.basename(archivo))
+                shutil.move(archivo, dest_path)
+            except Exception as e:
+                print(f"Failed to move {archivo}. Reason: {e}")
 
 def menu():
     ctk.set_appearance_mode('dark')
