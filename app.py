@@ -14,7 +14,7 @@ def obtener_directorios():
 
 def agregar_entry(frame):
     entry_frame = ctk.CTkFrame(frame)
-    nuevo_entry = ctk.CTkEntry(entry_frame)
+    nuevo_entry = ctk.CTkEntry(entry_frame, placeholder_text="Ingresar categoría")
     nuevo_entry.pack(padx=5,pady=5, side='left')
     borrar_entry = ctk.CTkButton(entry_frame, text='X', command= lambda:borrar_entry(entry_frame))
     borrar_entry.pack(padx=5, pady=5, side='left')
@@ -82,7 +82,7 @@ def menu():
     agregar_entry_button = ctk.CTkButton(frame, text='Nuevo', command=lambda: agregar_entry(frame))
     agregar_entry_button.pack(padx=10,pady=10)
 
-    api_entry = ctk.CTkEntry(root)
+    api_entry = ctk.CTkEntry(root, placeholder_text="API key de OpenAI", justify="center")
     api_entry.pack(padx=5, pady=5)
 
     organizar_archivos_button = ctk.CTkButton(root, text='Organizar', command=lambda: organizar_archivos(api_entry.get(), frame))
